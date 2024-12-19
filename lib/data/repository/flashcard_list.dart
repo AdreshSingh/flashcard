@@ -1,6 +1,6 @@
 import 'package:flashcard/domain/models/flashcard.dart';
 
-import './domain/repository/flashcard_repo.dart';
+import '../../domain/repository/flashcard_repo.dart';
 
 class FlashcardList implements FlashcardRepo {
   // list of cards
