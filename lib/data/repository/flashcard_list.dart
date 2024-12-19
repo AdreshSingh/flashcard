@@ -5,35 +5,33 @@ import '../../domain/repository/flashcard_repo.dart';
 class FlashcardList implements FlashcardRepo {
   // list of cards
   static final List<Flashcard> cards = [];
-  static final numberOfCards = cards.length;
+  static int numberOfCards = 0;
 
   // will add a new card
   @override
   Future<void> addFlashcard(Flashcard flashCard) async {
     cards.add(flashCard);
+    numberOfCards++;
   }
 
   // deletes the existing card
   @override
   Future<void> deleteFlashcard(int id) async {
     cards.removeAt(id);
+    numberOfCards--;
   }
 
   // updates the existing card
   @override
   Future<void> updateFlashcard(Flashcard flashCard) async {
-    bool isExist = false;
-    for (var i = 0; i < numberOfCards; i++) {
-      if (flashCard.id == cards[i].id) {
-        cards[i].question = flashCard.question;
-        cards[i].answer = flashCard.answer;
-        isExist = true;
-        break;
-      }
-    }
+    // Find the index of the card with the same id
+    int index = cards.indexWhere((card) => card.id == flashCard.id);
 
-    if (!isExist) {
-      cards.add(flashCard);
+    if (index != -1) {
+      // Update the question and answer of the matching card
+      cards[index]
+        ..question = flashCard.question
+        ..answer = flashCard.answer;
     }
   }
 }

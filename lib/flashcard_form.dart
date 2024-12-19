@@ -3,7 +3,8 @@ import 'package:flashcard/data/repository/flashcard_list.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardForm extends StatefulWidget {
-  const FlashcardForm({super.key});
+  final Flashcard? card;
+  const FlashcardForm({super.key, required this.card});
 
   @override
   State<FlashcardForm> createState() => _FlashcardFormState();
@@ -22,8 +23,21 @@ class _FlashcardFormState extends State<FlashcardForm> {
     ));
   }
 
+  // update the card
+  void updateCard() async {
+    await FlashcardList().updateFlashcard(Flashcard(
+      id: FlashcardList.cards.length,
+      question: _questionController.text,
+      answer: _answerController.text,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(widget.card?.answer);
+    // ? prepopulating if it selected for editting
+    _questionController.text = widget.card?.question ?? "";
+    _answerController.text = widget.card?.answer ?? "";
     return Scaffold(
       // appbar
       appBar: AppBar(
@@ -109,11 +123,11 @@ class _FlashcardFormState extends State<FlashcardForm> {
                   height: 50,
                   color: Colors.white.withOpacity(.6),
                   onPressed: () {
-                    addCard();
+                    widget.card == null ? addCard() : updateCard();
                   },
-                  child: const Text(
-                    "Confirm!",
-                    style: TextStyle(
+                  child: Text(
+                    widget.card == null ? "Confirm!" : "Update",
+                    style: const TextStyle(
                       fontSize: 20,
                     ),
                   ),

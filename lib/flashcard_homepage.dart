@@ -13,15 +13,54 @@ class _FlashcardHomepageState extends State<FlashcardHomepage> {
   // index for each card
   int cardId = 0;
 
-  // delete the card
-  void gotToAddScreen() async {
+  // ? tracking for tap
+  //? animationing visiblity
+  void cardTapped(Flashcard card) async {
+    setState(() {
+      card.toggleTapped();
+    });
+  }
+
+  //? navigate to the form page
+  void gotToAddScreen(Flashcard? card) async {
     // will refresh to show update
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => (const FlashcardForm()),
+        builder: (context) => (FlashcardForm(
+          card: card,
+        )),
       ),
     );
     setState(() {});
+  }
+
+  //? delete a specific card
+  void deleteCard(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Deleting flashcard"),
+          content: const Text("Are you sure to delete?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                FlashcardList().deleteFlashcard(index);
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+              child: const Text("Confirm"),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -50,14 +89,6 @@ class _FlashcardHomepageState extends State<FlashcardHomepage> {
         answer: "I am me",
       ),
     );
-
-    FlashcardList().addFlashcard(
-      Flashcard(
-        id: 3,
-        question: "how r u?",
-        answer: "i am fine",
-      ),
-    );
   }
 
   @override
@@ -80,15 +111,113 @@ class _FlashcardHomepageState extends State<FlashcardHomepage> {
           itemBuilder: (context, index) {
             final card = FlashcardList.cards[index];
 
-            return ListTile(
-              title: Text(card.question),
-              subtitle: Text(card.answer),
-              trailing: IconButton(
-                onPressed: () {
-                  FlashcardList().deleteFlashcard(index);
-                  setState(() {});
-                },
-                icon: const Icon(Icons.delete),
+            return GestureDetector(
+              onTap: () => cardTapped(card),
+              child: Container(
+                height: 200,
+                padding: const EdgeInsets.all(10.0),
+                margin: const EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1.5,
+                  ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.green.withOpacity(0.6),
+                      Colors.white.withOpacity(0.4),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // question
+                    Text(
+                      "Question",
+                      style: TextStyle(
+                        color: Colors.grey.shade900,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      card.question,
+                      style: TextStyle(
+                        color: Colors.grey.shade900,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+
+                    // answer
+
+                    Flexible(
+                      flex: 2,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        height: card.isTapped ? 50 : 20,
+                        child: card.isTapped
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Answer",
+                                    style: TextStyle(
+                                      color: Colors.grey.shade900,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  Text(
+                                    card.answer,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade900,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                "click to see answer",
+                                style: TextStyle(
+                                  color: Colors.grey.shade800,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    // buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // ? edit button
+                        IconButton(
+                          onPressed: () {
+                            gotToAddScreen(card);
+                          },
+                          icon: const Icon(Icons.edit),
+                        ),
+
+                        // ? delete button
+                        IconButton(
+                          onPressed: () {
+                            deleteCard(index);
+                          },
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             );
           },
@@ -96,7 +225,7 @@ class _FlashcardHomepageState extends State<FlashcardHomepage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          gotToAddScreen();
+          gotToAddScreen(null);
         },
         child: const Icon(Icons.plus_one_sharp),
       ),
