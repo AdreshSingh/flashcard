@@ -64,34 +64,6 @@ class _FlashcardHomepageState extends State<FlashcardHomepage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    FlashcardList().addFlashcard(
-      Flashcard(
-        id: 0,
-        question: "how r u?",
-        answer: "i am fine",
-      ),
-    );
-
-    FlashcardList().addFlashcard(
-      Flashcard(
-        id: 1,
-        question: "How did this?",
-        answer: "Nothing special",
-      ),
-    );
-
-    FlashcardList().addFlashcard(
-      Flashcard(
-        id: 2,
-        question: "Well, tell me abt u?",
-        answer: "I am me",
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

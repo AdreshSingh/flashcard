@@ -17,14 +17,14 @@ class _FlashcardFormState extends State<FlashcardForm> {
   // add new question to card
   void addCard() async {
     await FlashcardList().addFlashcard(Flashcard(
-      id: FlashcardList.numberOfCards,
+      id: DateTime.now().millisecondsSinceEpoch,
       question: _questionController.text,
       answer: _answerController.text,
     ));
   }
 
   // update the card
-  void updateCard() async {
+  void updateCard(Flashcard card) async {
     await FlashcardList().updateFlashcard(Flashcard(
       id: FlashcardList.cards.length,
       question: _questionController.text,
@@ -34,7 +34,6 @@ class _FlashcardFormState extends State<FlashcardForm> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.card?.answer);
     // ? prepopulating if it selected for editting
     _questionController.text = widget.card?.question ?? "";
     _answerController.text = widget.card?.answer ?? "";
@@ -123,7 +122,7 @@ class _FlashcardFormState extends State<FlashcardForm> {
                   height: 50,
                   color: Colors.white.withOpacity(.6),
                   onPressed: () {
-                    widget.card == null ? addCard() : updateCard();
+                    widget.card == null ? addCard() : updateCard(widget.card!);
                   },
                   child: Text(
                     widget.card == null ? "Confirm!" : "Update",
