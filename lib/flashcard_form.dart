@@ -1,7 +1,5 @@
-import 'dart:ui';
-
 import 'package:flashcard/domain/models/flashcard.dart';
-import 'package:flashcard/flashcard_list.dart';
+import 'package:flashcard/data/repository/flashcard_list.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardForm extends StatefulWidget {
